@@ -22,7 +22,7 @@ FILE * fout;
 
 enum class INSTRUCTION_TYPE
 {
-    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE
+    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT
 };
 enum class REG_TYPE
 {
@@ -35,8 +35,8 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9 */
-string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE"};
+                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12     13*/
+string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT"};
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
 string ltrim(const string& s)
@@ -133,6 +133,10 @@ int convertUnknownToTypeByte(string en)
     else if (en == "ADD" ) return 7;
     else if (en == "BEQ") return 8;
     else if (en == "BNE") return 9;
+    else if (en == "BGE") return 10;
+    else if (en == "BLE") return 11;
+    else if (en == "BGT") return 12;
+    else if (en == "BLT") return 13;
     //else if (en == "MUL") return 10;
 }
 
