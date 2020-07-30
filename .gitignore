@@ -1,0 +1,8 @@
+bin/
+obj/
+*.exe
+*.layout
+*.depend
+*.dll
+*.rom
+*.bak
