@@ -27,7 +27,7 @@ union LABEL{
 
 enum class INSTRUCTION_TYPE
 {
-    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT
+    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT, SBI, LBIX
 };
 enum class REG_TYPE
 {
@@ -40,8 +40,8 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13 */
-string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT"};
+                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
+string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBI", "LBIX"};
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
 string ltrim(const string& s)
@@ -142,6 +142,8 @@ int convertUnknownToTypeByte(string en)
     else if (en == "BLE") return 11;
     else if (en == "BGT") return 12;
     else if (en == "BLT") return 13;
+     else if (en == "SBI") return 14;
+    else if (en == "LBIX") return 15;
     //else if (en == "MUL") return 10;
 }
 
