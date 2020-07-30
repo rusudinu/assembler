@@ -216,7 +216,7 @@ INSTRUCTION parseRow(string line)
     writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
 }
 
-INSTRUCTION parseRowWithSpace(string label)
+INSTRUCTION parseRowWithSpace(string label, bool isCall)
 {
     cout << "FOUND LABEL " << label << "\n";
     if(labelsMap.count(label) == 0) cout << "LABEL NOT FOUND: " << label << "\n";
@@ -225,7 +225,7 @@ INSTRUCTION parseRowWithSpace(string label)
         cout << "LABEL FOUND: " << labelsMap[label] << "\n";
         int byteArray[4] = {0, 0, 0, 0};
         int currentPos = 0;
-        byteArray[0] = 4; //JUMP
+        byteArray[0] = isCall ? 7 : 4; //JUMP | CALL
         byteArray[1] = labelsMap[label];
         writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
     }
@@ -260,13 +260,13 @@ int main()
             if(line.rfind("CALL", 0) == 0)
             {
                 eraseAllSubStr(line, "CALL ");
-                parseRowWithSpace(line);
+                parseRowWithSpace(line, true);
             }
             else if(line.rfind("JUMP", 0) == 0)
             {
                 //THE LINE IS A LABEL
                 eraseAllSubStr(line, "JUMP ");
-                parseRowWithSpace(line);
+                parseRowWithSpace(line, false);
             }
             else if (line.rfind("BEQ", 0) == 0)
             {
