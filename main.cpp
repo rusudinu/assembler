@@ -35,7 +35,7 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-/* 0     1     2      3       4         5        6      7      8      9      10     11     12     13*/
+                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12     13*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT"};
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
@@ -225,7 +225,7 @@ INSTRUCTION parseRowWithSpace(string label, bool isCall)
         cout << "LABEL FOUND: " << labelsMap[label] << "\n";
         int byteArray[4] = {0, 0, 0, 0};
         int currentPos = 0;
-        byteArray[0] = isCall ? 7 : 4; //JUMP | CALL
+        byteArray[0] = isCall ? 7 : 4; //CALL | JUMP
         byteArray[1] = labelsMap[label];
         writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
     }
@@ -241,6 +241,7 @@ INSTRUCTION parseRowWithBNE(string row)
 
 }
 
+
 int main()
 {
     fout = fopen("game.rom","wb");
@@ -251,11 +252,8 @@ int main()
         std::string line;
         while (std::getline(in, line))
         {
-            //using printf() in all tests for consistency
-            //printf("%s", line.c_str());
             //line.c_str()
             //string toParse = line;
-            //TODO TRIM THE START OF THE WORD
             line = ltrim(line); //TRIMS THE INDENTATION
             if(line.rfind("CALL", 0) == 0)
             {
@@ -300,24 +298,6 @@ int main()
 
     }
     in.close();
-
-    /*
-    parseRow("LBI RA, 4");
-     cout << "\n"; //TODO REMOVE THOSE
-     //parse("ADD RD, RC, RB");
-     cout << "\n"; //TODO REMOVE THOSE
-     //parse("MOV RA, RC");
-    */
     fclose(fout);
     return 0;
 }
-
-
-/*
-RA, RB, RC, RD, RE, RF -- registri
-+ LBI REGISTER, VALUE
- + SB REGISTER, ADDRESS(REGISTER_OFFSET)
-+ CALL address
-+ JUMP address
-+ SYSCALL  ( no arguments here )
-*/
