@@ -1,0 +1,5 @@
+LBI RA, 5
+loop:
+LBI RB, 7
+LBI RC, 1
+JUMP loop

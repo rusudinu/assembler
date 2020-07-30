@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1596131947 source:c:\programming\openinfoeduparser\openinfoeduparser\main.cpp
+	<unordered_map>
+	<iostream>
+	<string>
+	<sstream>
+	<algorithm>
+	<iterator>
+	<stdio.h>
+	<stdlib.h>
+	<fstream>
+	<ctype.h>
+
