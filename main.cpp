@@ -35,7 +35,7 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12     13*/
+/* 0     1     2      3       4         5        6      7      8      9      10     11     12     13*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT"};
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
@@ -231,11 +231,13 @@ INSTRUCTION parseRowWithSpace(string label)
     }
 }
 
-INSTRUCTION parseRowWithBEQ(string row){
+INSTRUCTION parseRowWithBEQ(string row)
+{
 
 }
 
-INSTRUCTION parseRowWithBNE(string row){
+INSTRUCTION parseRowWithBNE(string row)
+{
 
 }
 
@@ -255,16 +257,23 @@ int main()
             //string toParse = line;
             //TODO TRIM THE START OF THE WORD
             line = ltrim(line); //TRIMS THE INDENTATION
-            if(line.rfind("JUMP", 0) == 0)
+            if(line.rfind("CALL", 0) == 0)
+            {
+                eraseAllSubStr(line, "CALL ");
+                parseRowWithSpace(line);
+            }
+            else if(line.rfind("JUMP", 0) == 0)
             {
                 //THE LINE IS A LABEL
                 eraseAllSubStr(line, "JUMP ");
                 parseRowWithSpace(line);
             }
-            else if (line.rfind("BEQ", 0) == 0){
+            else if (line.rfind("BEQ", 0) == 0)
+            {
                 parseRowWithBEQ(line);
             }
-            else if (line.rfind("BNE", 0) == 0){
+            else if (line.rfind("BNE", 0) == 0)
+            {
                 parseRowWithBNE(line);
             }
             else if(line.find(":") != std::string::npos)  // has a ":"{
