@@ -20,6 +20,11 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 
 FILE * fout;
 
+union LABEL{
+    unsigned short int SHORT;
+    unsigned char BYTE[2];
+};
+
 enum class INSTRUCTION_TYPE
 {
     LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT
@@ -35,7 +40,7 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12     13*/
+                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13 */
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT"};
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
@@ -223,10 +228,15 @@ INSTRUCTION parseRowWithSpace(string label, bool isCall)
     else
     {
         cout << "LABEL FOUND: " << labelsMap[label] << "\n";
+        LABEL myLabel;
+        myLabel.SHORT = 1203;
+        std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
         int byteArray[4] = {0, 0, 0, 0};
         int currentPos = 0;
         byteArray[0] = isCall ? 7 : 4; //CALL | JUMP
-        byteArray[1] = labelsMap[label];
+        byteArray[1] = 0; //labelsMap[label];
+        byteArray[2] = (int)myLabel.BYTE[1];
+        byteArray[3] = (int)myLabel.BYTE[0];
         writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
     }
 }
@@ -274,7 +284,7 @@ int main()
             {
                 parseRowWithBNE(line);
             }
-            else if(line.find(":") != std::string::npos)  // has a ":"{
+            else if(line.find(":") != std::string::npos)  // has a ":"
             {
                 cout << "was label" << "\n";
                 //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
