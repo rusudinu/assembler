@@ -262,10 +262,10 @@ int main()
                 parseRowWithSpace(line);
             }
             else if (line.rfind("BEQ", 0) == 0){
-                parseRowWithBEQ();
+                parseRowWithBEQ(line);
             }
             else if (line.rfind("BNE", 0) == 0){
-                perseRowWithBNE();
+                parseRowWithBNE(line);
             }
             else if(line.find(":") != std::string::npos)  // has a ":"{
             {
