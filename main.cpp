@@ -11,6 +11,7 @@
 
 using namespace std;
 
+ifstream inPreParse("input.txt");
 ifstream in("input.txt");
 
 unordered_map <string, int> labelsMap;
@@ -41,7 +42,7 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
+/* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
                                  "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"
                                 };
@@ -547,12 +548,72 @@ void makeRomHeader()
     romData[3] = 0;
 }
 
+void preParseLabels()
+{
+    int lineNumber = 0;
+    if (inPreParse.is_open())
+    {
+        cout << "PRE-PARSING STARTED" << "\n";
+        std::string line;
+        while (std::getline(inPreParse, line))
+        {
+            //line.c_str()
+            //string toParse = line;
+            line = ltrim(line); //TRIMS THE INDENTATION
+
+            //REMOVE THE COMMENTS FROM THE CODE MARKED WITH "#"
+            line = line.substr(0, line.find(" #", 0));
+
+            if(startsWith(line, "#") || startsWith(line, " #"))
+            {
+                cout << "COMMENTED LINE" << "\n";
+            }
+            else
+            {
+                if(line.rfind(".data", 0) == 0)  //is now reading the data for the rom
+                {
+                }
+                else if(line.rfind(".text", 0) == 0)  //is now reading the code
+                {
+                }
+                else
+                {
+                    if(line.find(":") != std::string::npos)  // has a ":"
+                    {
+                        cout << "was label" << "\n";
+                        //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
+                        line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
+                        pair<std::string,int> instr (line, lineNumber);
+                        labelsMap.insert(instr);
+                        cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                    }
+                    else if(trim(line) != "" )
+                    {
+                        //cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
+                        //parseRow(line);
+                    }
+                    else
+                    {
+                        cout << "was empty line" << "\n";
+                        lineNumber--;
+                    }
+                    lineNumber++;
+
+                }
+            }
+        }
+    }
+    inPreParse.close();
+}
+
 int main()
 {
 
     fout = fopen("game.rom","wb");
     int lineNumber = 0;
     bool isDataRow = false;
+
+    preParseLabels();
 
     if (in.is_open())
     {
@@ -598,9 +659,6 @@ int main()
                 }
                 else
                 {
-
-
-
                     if(isDataRow)
                     {
                         parseDataRow(line, lineNumber);
@@ -666,12 +724,13 @@ int main()
                         {
                             cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
                             parseRow(line);
-                            lineNumber++;
                         }
                         else
                         {
                             cout << "was empty line" << "\n";
+                            lineNumber--;
                         }
+                        lineNumber++;
                     }
                 }
             }
