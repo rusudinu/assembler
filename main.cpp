@@ -177,9 +177,11 @@ int convertUnknownToTypeByte(string en)
 
 void writeToFile(int byte1, int byte2,int byte3,int byte4)
 {
+    cout << "\n" << "-----------------WRITE TO FILE---------------" << "\n\n";
     char bytes[] = {byte1, byte2, byte3, byte4};
     fwrite(bytes,sizeof(bytes),1,fout);
-    cout << byte1 << byte2 << byte3 << byte4; //TODO REMOVE THIS
+    cout << " | BYTE1: " << byte1 << " | BYTE2: " << byte2  << " | BYTE3: " << byte3 << " | BYTE4: " << byte4; //TODO REMOVE THIS
+    cout << "\n\n" << "-----------------WRITE TO FILE---------------" << "\n";
 }
 
 INSTRUCTION parseRow(string line)
@@ -671,6 +673,8 @@ int main()
 
     for(int i = 0; i < romDataPosition; i+=4)
     {
+        writeToFile(romData[i], romData[i+1], romData[i+2], romData[i+3]);
+        //cout << romData[i] << " " << romData[i+1] << " " << romData[i+2]  << " " << romData[i+3] << "\n";
     }
 
 
