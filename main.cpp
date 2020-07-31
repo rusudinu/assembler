@@ -567,14 +567,17 @@ void preParseLabels()
             if(startsWith(line, "#") || startsWith(line, " #"))
             {
                 cout << "COMMENTED LINE" << "\n";
+                lineNumber--;
             }
             else
             {
                 if(line.rfind(".data", 0) == 0)  //is now reading the data for the rom
                 {
+                    lineNumber--;
                 }
                 else if(line.rfind(".text", 0) == 0)  //is now reading the code
                 {
+                    lineNumber--;
                 }
                 else
                 {
@@ -586,6 +589,7 @@ void preParseLabels()
                         pair<std::string,int> instr (line, lineNumber);
                         labelsMap.insert(instr);
                         cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                        lineNumber--;
                     }
                     else if(trim(line) != "" )
                     {
