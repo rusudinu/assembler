@@ -20,7 +20,8 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 
 FILE * fout;
 
-union LABEL{
+union LABEL
+{
     unsigned short int SHORT;
     unsigned char BYTE[2];
 };
@@ -40,10 +41,14 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
+/* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
-"RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"};
+                                 "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"
+                                };
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
+
+int romData[4000];
+int romDataPosition = 0;
 
 string ltrim(const string& s)
 {
@@ -60,6 +65,19 @@ string rtrim(const string& s)
 string trim(const string& s)
 {
     return rtrim(ltrim(s));
+}
+
+/*
+ * Case Sensitive Implementation of startsWith()
+ * It checks if the string 'mainStr' starts with given string 'toMatch'
+ */
+bool startsWith(std::string mainStr, std::string toMatch)
+{
+    // std::string::find returns 0 if toMatch is found at starting
+    if(mainStr.find(toMatch) == 0)
+        return true;
+    else
+        return false;
 }
 
 void eraseAllSubStr(std::string & mainStr, const std::string & toErase)
@@ -128,36 +146,32 @@ int convertUnknownToTypeByte(string en)
     else if (en == "SP") return 7;
     else if (en == "IN") return 8;
     else if (en == "RET") return 9;
-    else if (en == "LBI") return 0;
-    else if (en == "LB") return 1;
-    else if (en == "SB") return 2;
-    else if (en == "CALL") return 3;
-    else if (en == "JUMP") return 4;
-    else if (en == "SYSCALL") return 5;
-    else if (en == "MOV" ) return 6;
-    else if (en == "ADD" ) return 7;
-    else if (en == "BEQ") return 8;
-    else if (en == "BNE") return 9;
-    else if (en == "BGE") return 10;
-    else if (en == "BLE") return 11;
-    else if (en == "BGT") return 12;
-    else if (en == "BLT") return 13;
-     else if (en == "SBIX") return 14;
-    else if (en == "LBIX") return 15;
-    else if (en == "XOR") return 16;
-    else if (en == "JRT") return 17;
-    else if (en == "PUSH") return 18;
-    else if (en == "POP") return 19;
-    else if (en == "RRA") return 20;
-    else if (en == "RRB") return 21;
-    else if (en == "RRC") return 22;
-    else if (en == "RRD") return 23;
-    else if (en == "RRE") return 24;
-    else if (en == "RRF") return 25;
-    else if (en == "XOR") return 26;
-    else if (en == "JRT") return 27;
-    else if (en == "PUSH") return 28;
-    else if (en == "POP") return 29;
+    else if (en == "LBI") return (int)INSTRUCTION_TYPE::LBI;
+    else if (en == "LB") return (int)INSTRUCTION_TYPE::LB;
+    else if (en == "SB") return (int)INSTRUCTION_TYPE::SB;
+    else if (en == "CALL") return (int)INSTRUCTION_TYPE::CALL;
+    else if (en == "JUMP") return (int)INSTRUCTION_TYPE::JUMP;
+    else if (en == "SYSCALL") return (int)INSTRUCTION_TYPE::SYSCALL;
+    else if (en == "MOV" ) return (int)INSTRUCTION_TYPE::MOV;
+    else if (en == "ADD" ) return (int)INSTRUCTION_TYPE::ADD;
+    else if (en == "BEQ") return (int)INSTRUCTION_TYPE::BEQ;
+    else if (en == "BNE") return (int)INSTRUCTION_TYPE::BNE;
+    else if (en == "BGE") return (int)INSTRUCTION_TYPE::BGE;
+    else if (en == "BLE") return (int)INSTRUCTION_TYPE::BLE;
+    else if (en == "BGT") return (int)INSTRUCTION_TYPE::BGT;
+    else if (en == "BLT") return (int)INSTRUCTION_TYPE::BLT;
+    else if (en == "SBIX") return (int)INSTRUCTION_TYPE::SBIX;
+    else if (en == "LBIX") return (int)INSTRUCTION_TYPE::LBIX;
+    else if (en == "RRA") return (int)INSTRUCTION_TYPE::RRA;
+    else if (en == "RRB") return (int)INSTRUCTION_TYPE::RRB;
+    else if (en == "RRC") return (int)INSTRUCTION_TYPE::RRC;
+    else if (en == "RRD") return (int)INSTRUCTION_TYPE::RRD;
+    else if (en == "RRE") return (int)INSTRUCTION_TYPE::RRE;
+    else if (en == "RRF") return (int)INSTRUCTION_TYPE::RRF;
+    else if (en == "XOR") return (int)INSTRUCTION_TYPE::XOR;
+    else if (en == "JRT") return (int)INSTRUCTION_TYPE::JRT;
+    else if (en == "PUSH") return (int)INSTRUCTION_TYPE::PUSH;
+    else if (en == "POP") return (int)INSTRUCTION_TYPE::POP;
 }
 
 void writeToFile(int byte1, int byte2,int byte3,int byte4)
@@ -266,7 +280,8 @@ INSTRUCTION parseRowWithBNE(string row)
 
 }
 
-void parseRowRamLoader(string line){
+void parseRowRamLoader(string line)
+{
     cout << "RAM LOADER FOUND: " << line << "\n";
     int byteArray[4] = {0, 0, 0, 0};
     int currentPos = 0;
@@ -347,7 +362,8 @@ void parseRowRamLoader(string line){
     }
 }
 
-void parseRowRamLoaderWithLabel(string line){
+void parseRowRamLoaderWithLabel(string line)
+{
     cout << "RAM LOADER FOUND: " << line << "\n";
     int byteArray[4] = {0, 0, 0, 0};
     int currentPos = 0;
@@ -419,23 +435,57 @@ void parseRowRamLoaderWithLabel(string line){
     else
     {
         if(labelsMap.count(cuv) == 0) cout << "LABEL NOT FOUND: " << cuv << "\n";
-        else{
+        else
+        {
             LABEL myLabel;
-        myLabel.SHORT = labelsMap[cuv];
-        //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
-        //byteArray[currentPos] = stoi(cuv);
-        byteArray[2] = (int)myLabel.BYTE[1];
-        byteArray[3] = (int)myLabel.BYTE[0];
-        currentPos++;
+            myLabel.SHORT = labelsMap[cuv];
+            //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
+            //byteArray[currentPos] = stoi(cuv);
+            byteArray[2] = (int)myLabel.BYTE[1];
+            byteArray[3] = (int)myLabel.BYTE[0];
+            currentPos++;
         }
     }
-     writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
+    writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
+}
+
+void parseDataRow(string dataRow, int lineNumber)
+{
+    cout << "\n" << "--------------------------------" << "\n";
+    cout << "DATA ROW LABEL " << "\n";
+    cout << "ON ROW NUMBER: " << lineNumber << "\n";
+    cout << "VALUES: " << dataRow << "\n";
+    string label = "";
+    for(int i = 0; i < dataRow.size(); i++)
+    {
+        if(dataRow[i] != ':') {
+        label = label + dataRow[i];
+        }
+        else{
+            cout << "FOUND LABEL: " << label << "\n";
+        }
+    }
+    //INSERT THE LABEL IN THE HASHMAP WITH THE POSITION OF THE FIRST BYTE IN ROM
+    //dataRow.erase(std::remove(dataRow.begin(), dataRow.end(), ':'), dataRow.end());
+    pair<std::string,int> instr (label, romDataPosition);
+    labelsMap.insert(instr);
+
+    eraseAllSubStr(dataRow, label);
+    cout << "ROW AFTER THE LABEL WAS REMOVED: " << dataRow<< "\n";
+
+
+    romDataPosition++; // !TODO DON T FORGET TO INCREMENT THIS FUCKER
+
+
+    //cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n";
+    cout << "\n" << "--------------------------------" << "\n";
 }
 
 int main()
 {
     fout = fopen("game.rom","wb");
     int lineNumber = 0;
+    bool isDataRow = false;
 
     if (in.is_open())
     {
@@ -449,52 +499,89 @@ int main()
             //REMOVE THE COMMENTS FROM THE CODE MARKED WITH "#"
             line = line.substr(0, line.find(" #", 0));
 
-            if(line.rfind("CALL", 0) == 0)
+            if(startsWith(line, "#") || startsWith(line, " #")){
+                cout << "COMMENTED LINE" << "\n";
+            }else{
+            if(line.rfind(".data", 0) == 0)  //is now reading the data for the rom
             {
-                eraseAllSubStr(line, "CALL ");
-                parseRowWithSpace(line, true);
+                cout << "FOUND DATA ROW" << "\n";
+                isDataRow = true;
             }
-            else if(line.rfind("JUMP", 0) == 0)
+            if(line.rfind(".text", 0) == 0)  //is now reading the code
             {
-                //THE LINE IS A LABEL
-                eraseAllSubStr(line, "JUMP ");
-                parseRowWithSpace(line, false);
-            }
-            else if(line.rfind("RRA", 0) == 0){parseRowRamLoader(line);}
-            else if(line.rfind("RRB", 0) == 0){parseRowRamLoader(line);}
-            else if(line.rfind("RRC", 0) == 0){parseRowRamLoader(line);}
-            else if(line.rfind("RRD", 0) == 0){parseRowRamLoader(line);}
-            else if(line.rfind("RRE", 0) == 0){parseRowRamLoader(line);}
-            else if(line.rfind("RRF", 0) == 0){parseRowRamLoader(line);}
-            /*
-            else if (line.rfind("BEQ", 0) == 0)
-            {
-                parseRowWithBEQ(line);
-            }
-            else if (line.rfind("BNE", 0) == 0)
-            {
-                parseRowWithBNE(line);
-            }
-            */
-            else if(line.find(":") != std::string::npos)  // has a ":"
-            {
-                cout << "was label" << "\n";
-                //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
-                line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
-                pair<std::string,int> instr (line, lineNumber);
-                labelsMap.insert(instr);
-                cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                cout << "FOUND TEXT ROW" << "\n";
+                isDataRow = false;
             }
 
-            else if(trim(line) != "" )
-            {
-                cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
-                parseRow(line);
-                lineNumber++;
-            }
+            if(isDataRow) {parseDataRow(line, lineNumber);lineNumber++;}
             else
             {
-                cout << "was empty line" << "\n";
+                if(line.rfind("CALL", 0) == 0)
+                {
+                    eraseAllSubStr(line, "CALL ");
+                    parseRowWithSpace(line, true);
+                }
+                else if(line.rfind("JUMP", 0) == 0)
+                {
+                    //THE LINE IS A LABEL
+                    eraseAllSubStr(line, "JUMP ");
+                    parseRowWithSpace(line, false);
+                }
+                else if(line.rfind("RRA", 0) == 0)
+                {
+                    parseRowRamLoader(line);
+                }
+                else if(line.rfind("RRB", 0) == 0)
+                {
+                    parseRowRamLoader(line);
+                }
+                else if(line.rfind("RRC", 0) == 0)
+                {
+                    parseRowRamLoader(line);
+                }
+                else if(line.rfind("RRD", 0) == 0)
+                {
+                    parseRowRamLoader(line);
+                }
+                else if(line.rfind("RRE", 0) == 0)
+                {
+                    parseRowRamLoader(line);
+                }
+                else if(line.rfind("RRF", 0) == 0)
+                {
+                    parseRowRamLoader(line);
+                }
+                /*
+                else if (line.rfind("BEQ", 0) == 0)
+                {
+                    parseRowWithBEQ(line);
+                }
+                else if (line.rfind("BNE", 0) == 0)
+                {
+                    parseRowWithBNE(line);
+                }
+                */
+                else if(line.find(":") != std::string::npos)  // has a ":"
+                {
+                    cout << "was label" << "\n";
+                    //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
+                    line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
+                    pair<std::string,int> instr (line, lineNumber);
+                    labelsMap.insert(instr);
+                    cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                }
+
+                else if(trim(line) != "" )
+                {
+                    cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
+                    parseRow(line);
+                    lineNumber++;
+                }
+                else
+                {
+                    cout << "was empty line" << "\n";
+                }
+            }
             }
         }
 
