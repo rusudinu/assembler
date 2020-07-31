@@ -328,7 +328,7 @@ void parseRowRamLoader(string line){
     }
     if(isdigit(cuv[0]))
     {
-        cout << "OUTER IF";
+        //cout << "OUTER IF";
         LABEL myLabel;
         myLabel.SHORT = stoi(cuv);
         //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
@@ -347,6 +347,90 @@ void parseRowRamLoader(string line){
     }
 }
 
+void parseRowRamLoaderWithLabel(string line){
+    cout << "RAM LOADER FOUND: " << line << "\n";
+    int byteArray[4] = {0, 0, 0, 0};
+    int currentPos = 0;
+    string cuv = "";
+    for(int i = 0; i < line.size(); i++)
+    {
+        if(line[i] != ' ') cuv = cuv + line[i];
+        else
+        {
+            //parse it
+            if(cuv.find(",") != std::string::npos)  // has a comma
+            {
+                string result;
+                //result = cuv.substr(0, myString.size()-1);
+                remove_copy(cuv.begin(), cuv.end(), back_inserter(result), ','); //remove the ','
+                if(isdigit(result[0]))
+                {
+                    LABEL myLabel;
+                    myLabel.SHORT = stoi(cuv);
+                    //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
+                    //byteArray[currentPos] = stoi(cuv);
+                    byteArray[2] = (int)myLabel.BYTE[1];
+                    byteArray[3] = (int)myLabel.BYTE[0];
+                    currentPos++;
+                }
+                else
+                {
+                    cout << convertUnknownToTypeByte(result) <<" ";
+                    byteArray[currentPos] = convertUnknownToTypeByte(result);
+                    currentPos++;
+                }
+                //cout <<"MY WORD: " << result << "\n";
+            }
+            else
+            {
+                if(isdigit(cuv[0]))
+                {
+                    //cout << cuv;
+                    LABEL myLabel;
+                    myLabel.SHORT = stoi(cuv);
+                    //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
+                    //byteArray[currentPos] = stoi(cuv);
+                    byteArray[2] = (int)myLabel.BYTE[1];
+                    byteArray[3] = (int)myLabel.BYTE[0];
+                    currentPos++;
+                }
+                else
+                {
+                    cout << convertUnknownToTypeByte(cuv) <<" ";
+                    byteArray[currentPos] = convertUnknownToTypeByte(cuv);
+                    currentPos++;
+                }
+                //cout <<"MY WORD: " << cuv << "\n";
+            }
+            cuv = "";
+        }
+    }
+    if(isdigit(cuv[0]))
+    {
+        //cout << "OUTER IF";
+        LABEL myLabel;
+        myLabel.SHORT = stoi(cuv);
+        //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
+        //byteArray[currentPos] = stoi(cuv);
+        byteArray[2] = (int)myLabel.BYTE[1];
+        byteArray[3] = (int)myLabel.BYTE[0];
+        currentPos++;
+    }
+    else
+    {
+        if(labelsMap.count(cuv) == 0) cout << "LABEL NOT FOUND: " << cuv << "\n";
+        else{
+            LABEL myLabel;
+        myLabel.SHORT = labelsMap[cuv];
+        //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
+        //byteArray[currentPos] = stoi(cuv);
+        byteArray[2] = (int)myLabel.BYTE[1];
+        byteArray[3] = (int)myLabel.BYTE[0];
+        currentPos++;
+        }
+    }
+     writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
+}
 
 int main()
 {
