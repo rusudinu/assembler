@@ -41,7 +41,7 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-/* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
+                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
                                  "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"
                                 };
@@ -49,6 +49,7 @@ string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "
 
 int romData[4000];
 int romDataPosition = 0;
+int romDataCodeStart = 0;
 
 string ltrim(const string& s)
 {
@@ -262,7 +263,7 @@ INSTRUCTION parseRowWithSpace(string label, bool isCall)
         std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
         int byteArray[4] = {0, 0, 0, 0};
         int currentPos = 0;
-        byteArray[0] = isCall ? 7 : 4; //CALL | JUMP
+        byteArray[0] = isCall ? (int)INSTRUCTION_TYPE::CALL : (int)INSTRUCTION_TYPE::JUMP; //CALL | JUMP
         byteArray[1] = 0; //labelsMap[label];
         byteArray[2] = (int)myLabel.BYTE[1];
         byteArray[3] = (int)myLabel.BYTE[0];
@@ -651,8 +652,9 @@ int main()
         }
 
     }
-    //FOR TESTING PURPOSES PRINTS THE ROM
 
+
+    //FOR TESTING PURPOSES PRINTS THE ROM DATA TO THE CONSOLE
     for(int i = 0; i < romDataPosition; i++)
     {
         if(i % 4 == 0 && i != 0) cout << "\n";
@@ -664,6 +666,14 @@ int main()
             cout << "0 ";
         }
     }
+
+    //PRINTS THE ROM DATA TO THE ROM FILE
+
+    for(int i = 0; i < romDataPosition; i+=4)
+    {
+    }
+
+
 
     in.close();
     fclose(fout);
