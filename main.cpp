@@ -331,8 +331,8 @@ void parseRowRamLoader(string line)
                     byteArray[2] = (int)myLabel.BYTE[1];
                     byteArray[3] = (int)myLabel.BYTE[0];
                     currentPos++;
-                    writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
-                    return;
+                    //writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
+                    //return;
                 }
                 else
                 {
@@ -355,8 +355,8 @@ void parseRowRamLoader(string line)
         byteArray[2] = (int)myLabel.BYTE[1];
         byteArray[3] = (int)myLabel.BYTE[0];
         currentPos++;
-        writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
-        return;
+        //writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
+        //return;
     }
     else
     {
@@ -364,6 +364,7 @@ void parseRowRamLoader(string line)
         byteArray[currentPos] = convertUnknownToTypeByte(cuv);
         currentPos++;
     }
+    writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
 }
 
 void parseRowRamLoaderWithLabel(string line)
