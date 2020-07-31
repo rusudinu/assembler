@@ -41,14 +41,15 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
+/* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
                                  "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"
                                 };
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
 int romData[4000];
-int romDataPosition = 0;
+int romINSTR[10000];
+int romDataPosition = 4;
 int romDataCodeStart = 0;
 
 string ltrim(const string& s)
@@ -533,17 +534,23 @@ void parseDataRow(string dataRow, int lineNumber)
     cout << "\n" << "--------------------------------" << "\n";
 }
 
-void makeRomHeader(){
-    romData[0] = 0;
-    romData[1] = 0;
+void makeRomHeader()
+{
+    cout << "LUCA ROM DATA POS" << romDataPosition << "\n";
+    LABEL myLabel;
+    myLabel.SHORT = ((romDataPosition / 4) + 1);
+    //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
+    //byteArray[currentPos] = stoi(cuv);
+    romData[0] = (int)myLabel.BYTE[1];
+    romData[1] = (int)myLabel.BYTE[0];
     romData[2] = 0;
     romData[3] = 0;
-    romDataPosition = 4;
+    cout << "LUCA ROM DATA POS" << romData[0] << " | " << romData[1] << "\n";
 }
 
 int main()
 {
-    makeRomHeader();
+
     fout = fopen("game.rom","wb");
     int lineNumber = 0;
     bool isDataRow = false;
@@ -573,6 +580,20 @@ int main()
                 }
                 if(line.rfind(".text", 0) == 0)  //is now reading the code
                 {
+                    makeRomHeader();
+
+                    for(int i = 0; i < romDataPosition; i+=4)
+                    {
+                        if(i == 0)
+                        {
+                            //PRINTS THE HEADER
+                            cout << "LUCA ROM DATA WRITE" << romData[i]<< romData[i+1] << romData[i+2] << romData[i+3];
+                        }
+                        writeToFile(romData[i], romData[i+1], romData[i+2], romData[i+3]);
+                        //cout << romData[i] << " " << romData[i+1] << " " << romData[i+2]  << " " << romData[i+3] << "\n";
+                    }
+
+
                     cout << "FOUND TEXT ROW" << "\n";
                     isDataRow = false;
                 }
@@ -584,6 +605,7 @@ int main()
                 }
                 else
                 {
+
                     if(line.rfind("CALL", 0) == 0)
                     {
                         eraseAllSubStr(line, "CALL ");
@@ -656,6 +678,7 @@ int main()
     }
 
 
+
     //FOR TESTING PURPOSES PRINTS THE ROM DATA TO THE CONSOLE
     for(int i = 0; i < romDataPosition; i++)
     {
@@ -663,19 +686,16 @@ int main()
         cout << romData[i] << " ";
     }
 
-    if(romDataPosition % 4 != 0){ //THIS SIMULATES THE ACUTAL MEMMORY, BECAUSE THE ROM DATA VECTOR IS GLOBAL SO IT IS ALREADY FILLED WITH "0"
-        for(int i = 0; i < romDataPosition % 4; i++){
+    if(romDataPosition % 4 != 0)  //THIS SIMULATES THE ACUTAL MEMMORY, BECAUSE THE ROM DATA VECTOR IS GLOBAL SO IT IS ALREADY FILLED WITH "0"
+    {
+        for(int i = 0; i < romDataPosition % 4; i++)
+        {
             cout << "0 ";
         }
     }
 
     //PRINTS THE ROM DATA TO THE ROM FILE
 
-    for(int i = 0; i < romDataPosition; i+=4)
-    {
-        writeToFile(romData[i], romData[i+1], romData[i+2], romData[i+3]);
-        //cout << romData[i] << " " << romData[i+1] << " " << romData[i+2]  << " " << romData[i+3] << "\n";
-    }
 
 
 
