@@ -539,7 +539,7 @@ void parseDataRow(string dataRow, int lineNumber)
 void makeRomHeader()
 {
     LABEL myLabel;
-    myLabel.SHORT = ((romDataPosition / 4) + 1);
+    myLabel.SHORT = ((romDataPosition / 4));
     //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
     //byteArray[currentPos] = stoi(cuv);
     romData[0] = (int)myLabel.BYTE[1];
