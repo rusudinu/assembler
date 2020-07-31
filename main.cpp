@@ -30,7 +30,7 @@ union LABEL
 
 enum class INSTRUCTION_TYPE
 {
-    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT, SBIX, LBIX, JRT, PUSH, POP, RRA, RRB, RRC, RRD, RRE, RRF, XOR
+    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT, SBIX, LBIX, JRT, PUSH, POP, RRA, RRB, RRC, RRD, RRE, RRF, XOR, SUB
 };
 enum class REG_TYPE
 {
@@ -45,7 +45,7 @@ struct INSTRUCTION
 };
 /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
-                                 "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"
+                                 "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP", "SUB"
                                 };
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
