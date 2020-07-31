@@ -27,7 +27,7 @@ union LABEL{
 
 enum class INSTRUCTION_TYPE
 {
-    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT, SBI, LBIX
+    LBI, LB, SB, CALL, JUMP, SYSCALL, MOV, ADD, BEQ, BNE, BGE, BLE, BGT, BLT, SBIX, LBIX, XOR, JRT, PUSH, POP, RRA, RRB, RRC, RRD, RRE, RRF
 };
 enum class REG_TYPE
 {
@@ -41,7 +41,8 @@ struct INSTRUCTION
     int value;
 };
                                 /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
-string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBI", "LBIX"};
+string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
+"RRA", "RRB", "RRC", "RRD", "RRE", "RRF"};
 string REG_TYPE_STR[] = {"RA", "RB", "RC", "RD", "RE", "RF", "PC", "SP", "IN", "RET"};
 
 string ltrim(const string& s)
@@ -142,9 +143,18 @@ int convertUnknownToTypeByte(string en)
     else if (en == "BLE") return 11;
     else if (en == "BGT") return 12;
     else if (en == "BLT") return 13;
-     else if (en == "SBI") return 14;
+     else if (en == "SBIX") return 14;
     else if (en == "LBIX") return 15;
-    //else if (en == "MUL") return 10;
+    else if (en == "XOR") return 16;
+    else if (en == "JRT") return 17;
+    else if (en == "PUSH") return 18;
+    else if (en == "POP") return 19;
+    else if (en == "RRA") return 20;
+    else if (en == "RRB") return 21;
+    else if (en == "RRC") return 22;
+    else if (en == "RRD") return 23;
+    else if (en == "RRE") return 24;
+    else if (en == "RRF") return 25;
 }
 
 void writeToFile(int byte1, int byte2,int byte3,int byte4)
