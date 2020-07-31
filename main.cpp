@@ -41,7 +41,7 @@ struct INSTRUCTION
     REG_TYPE src;
     int value;
 };
-/* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
+                                /* 0     1     2      3       4         5        6      7      8      9      10     11     12    13      14     15*/
 string INSTRUCTION_TYPE_STR[] = {"LBI", "LB", "SB", "CALL", "JUMP", "SYSCALL", "MOV", "ADD", "BEQ", "BNE", "BGE", "BLE", "BGT", "BLT", "SBIX", "LBIX",
                                  "RRA", "RRB", "RRC", "RRD", "RRE", "RRF", "XOR", "JRT", "PUSH", "POP"
                                 };
@@ -536,7 +536,6 @@ void parseDataRow(string dataRow, int lineNumber)
 
 void makeRomHeader()
 {
-    cout << "LUCA ROM DATA POS" << romDataPosition << "\n";
     LABEL myLabel;
     myLabel.SHORT = ((romDataPosition / 4) + 1);
     //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
@@ -545,7 +544,6 @@ void makeRomHeader()
     romData[1] = (int)myLabel.BYTE[0];
     romData[2] = 0;
     romData[3] = 0;
-    cout << "LUCA ROM DATA POS" << romData[0] << " | " << romData[1] << "\n";
 }
 
 int main()
@@ -578,7 +576,7 @@ int main()
                     cout << "FOUND DATA ROW" << "\n";
                     isDataRow = true;
                 }
-                if(line.rfind(".text", 0) == 0)  //is now reading the code
+                else if(line.rfind(".text", 0) == 0)  //is now reading the code
                 {
                     makeRomHeader();
 
@@ -587,7 +585,7 @@ int main()
                         if(i == 0)
                         {
                             //PRINTS THE HEADER
-                            cout << "LUCA ROM DATA WRITE" << romData[i]<< romData[i+1] << romData[i+2] << romData[i+3];
+                            cout << romData[i]<< romData[i+1] << romData[i+2] << romData[i+3];
                         }
                         writeToFile(romData[i], romData[i+1], romData[i+2], romData[i+3]);
                         //cout << romData[i] << " " << romData[i+1] << " " << romData[i+2]  << " " << romData[i+3] << "\n";
@@ -597,79 +595,82 @@ int main()
                     cout << "FOUND TEXT ROW" << "\n";
                     isDataRow = false;
                 }
-
-                if(isDataRow)
-                {
-                    parseDataRow(line, lineNumber);
-                    lineNumber++;
-                }
                 else
                 {
 
-                    if(line.rfind("CALL", 0) == 0)
-                    {
-                        eraseAllSubStr(line, "CALL ");
-                        parseRowWithSpace(line, true);
-                    }
-                    else if(line.rfind("JUMP", 0) == 0)
-                    {
-                        //THE LINE IS A LABEL
-                        eraseAllSubStr(line, "JUMP ");
-                        parseRowWithSpace(line, false);
-                    }
-                    else if(line.rfind("RRA", 0) == 0)
-                    {
-                        parseRowRamLoader(line);
-                    }
-                    else if(line.rfind("RRB", 0) == 0)
-                    {
-                        parseRowRamLoader(line);
-                    }
-                    else if(line.rfind("RRC", 0) == 0)
-                    {
-                        parseRowRamLoader(line);
-                    }
-                    else if(line.rfind("RRD", 0) == 0)
-                    {
-                        parseRowRamLoader(line);
-                    }
-                    else if(line.rfind("RRE", 0) == 0)
-                    {
-                        parseRowRamLoader(line);
-                    }
-                    else if(line.rfind("RRF", 0) == 0)
-                    {
-                        parseRowRamLoader(line);
-                    }
-                    /*
-                    else if (line.rfind("BEQ", 0) == 0)
-                    {
-                        parseRowWithBEQ(line);
-                    }
-                    else if (line.rfind("BNE", 0) == 0)
-                    {
-                        parseRowWithBNE(line);
-                    }
-                    */
-                    else if(line.find(":") != std::string::npos)  // has a ":"
-                    {
-                        cout << "was label" << "\n";
-                        //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
-                        line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
-                        pair<std::string,int> instr (line, lineNumber);
-                        labelsMap.insert(instr);
-                        cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
-                    }
 
-                    else if(trim(line) != "" )
+
+                    if(isDataRow)
                     {
-                        cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
-                        parseRow(line);
+                        parseDataRow(line, lineNumber);
                         lineNumber++;
                     }
                     else
                     {
-                        cout << "was empty line" << "\n";
+                        if(line.rfind("CALL", 0) == 0)
+                        {
+                            eraseAllSubStr(line, "CALL ");
+                            parseRowWithSpace(line, true);
+                        }
+                        else if(line.rfind("JUMP", 0) == 0)
+                        {
+                            //THE LINE IS A LABEL
+                            eraseAllSubStr(line, "JUMP ");
+                            parseRowWithSpace(line, false);
+                        }
+                        else if(line.rfind("RRA", 0) == 0)
+                        {
+                            parseRowRamLoader(line);
+                        }
+                        else if(line.rfind("RRB", 0) == 0)
+                        {
+                            parseRowRamLoader(line);
+                        }
+                        else if(line.rfind("RRC", 0) == 0)
+                        {
+                            parseRowRamLoader(line);
+                        }
+                        else if(line.rfind("RRD", 0) == 0)
+                        {
+                            parseRowRamLoader(line);
+                        }
+                        else if(line.rfind("RRE", 0) == 0)
+                        {
+                            parseRowRamLoader(line);
+                        }
+                        else if(line.rfind("RRF", 0) == 0)
+                        {
+                            parseRowRamLoader(line);
+                        }
+                        /*
+                        else if (line.rfind("BEQ", 0) == 0)
+                        {
+                            parseRowWithBEQ(line);
+                        }
+                        else if (line.rfind("BNE", 0) == 0)
+                        {
+                            parseRowWithBNE(line);
+                        }
+                        */
+                        else if(line.find(":") != std::string::npos)  // has a ":"
+                        {
+                            cout << "was label" << "\n";
+                            //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
+                            line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
+                            pair<std::string,int> instr (line, lineNumber);
+                            labelsMap.insert(instr);
+                            cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                        }
+                        else if(trim(line) != "" )
+                        {
+                            cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
+                            parseRow(line);
+                            lineNumber++;
+                        }
+                        else
+                        {
+                            cout << "was empty line" << "\n";
+                        }
                     }
                 }
             }
@@ -695,9 +696,6 @@ int main()
     }
 
     //PRINTS THE ROM DATA TO THE ROM FILE
-
-
-
 
     in.close();
     fclose(fout);
