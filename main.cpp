@@ -281,6 +281,10 @@ int main()
             //line.c_str()
             //string toParse = line;
             line = ltrim(line); //TRIMS THE INDENTATION
+
+            //REMOVE THE COMMENTS FROM THE CODE MARKED WITH "#"
+            line = line.substr(0, line.find(" #", 0));
+
             if(line.rfind("CALL", 0) == 0)
             {
                 eraseAllSubStr(line, "CALL ");
