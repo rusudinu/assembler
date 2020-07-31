@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
+#include <math.h>
 #include <ctype.h>
 
 using namespace std;
@@ -540,6 +541,7 @@ void makeRomHeader()
 {
     LABEL myLabel;
     myLabel.SHORT = ((romDataPosition / 4));
+    if(romDataPosition%4!=0) myLabel.SHORT++;
     //std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
     //byteArray[currentPos] = stoi(cuv);
     romData[0] = (int)myLabel.BYTE[1];
