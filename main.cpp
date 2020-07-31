@@ -718,12 +718,14 @@ int main()
                         */
                         else if(line.find(":") != std::string::npos)  // has a ":"
                         {
+                            /*
                             cout << "was label" << "\n";
                             //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
                             line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
                             pair<std::string,int> instr (line, lineNumber);
                             labelsMap.insert(instr);
                             cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                            */
                         }
                         else if(trim(line) != "" )
                         {
