@@ -456,12 +456,17 @@ void parseDataRow(string dataRow, int lineNumber)
     cout << "ON ROW NUMBER: " << lineNumber << "\n";
     cout << "VALUES: " << dataRow << "\n";
     string label = "";
+    string cuv = ""; //IS ACTUALLY THE VALUE BUT I AM USING CUV BECAUSE I COPY PASTED THE CODE FROM ABOVE XD
+    int labelPoz = 0;
     for(int i = 0; i < dataRow.size(); i++)
     {
-        if(dataRow[i] != ':') {
-        label = label + dataRow[i];
+        if(dataRow[i] != ':')
+        {
+            label = label + dataRow[i];
         }
-        else{
+        else
+        {
+            labelPoz = i + 1;
             cout << "FOUND LABEL: " << label << "\n";
         }
     }
@@ -470,19 +475,72 @@ void parseDataRow(string dataRow, int lineNumber)
     pair<std::string,int> instr (label, romDataPosition);
     labelsMap.insert(instr);
 
-    eraseAllSubStr(dataRow, label);
-    cout << "ROW AFTER THE LABEL WAS REMOVED: " << dataRow<< "\n";
+    for(int i = labelPoz; i < dataRow.size(); i++)
+    {
+        if(dataRow[i] != ' ') cuv = cuv + dataRow[i];
+        else
+        {
+            //parse it
+            if(cuv.find(",") != std::string::npos)  // has a comma
+            {
+                string result;
+                //result = cuv.substr(0, myString.size()-1);
+                remove_copy(cuv.begin(), cuv.end(), back_inserter(result), ','); //remove the ','
+                if(isdigit(result[0]))
+                {
+                    //ADD IT IN THE BYTES DATA VECTOR
+                    romData[romDataPosition] =  stoi(cuv);
+                    romDataPosition++;
+                }
+                else
+                {
 
+                }
+                //cout <<"MY WORD: " << result << "\n";
+            }
+            else
+            {
+                if(isdigit(cuv[0]))
+                {
+                    //ADD IT IN THE BYTES DATA VECTOR
+                    romData[romDataPosition] =  stoi(cuv);
+                    romDataPosition++;
+                }
+                else
+                {
 
-    romDataPosition++; // !TODO DON T FORGET TO INCREMENT THIS FUCKER
+                }
+                //cout <<"MY WORD: " << cuv << "\n";
+            }
+            cuv = "";
+        }
+        //cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n";
 
+    }
+    if(isdigit(cuv[0]))
+    {
+        //ADD IT IN THE BYTES DATA VECTOR
+        romData[romDataPosition] =  stoi(cuv);
+        romDataPosition++;
+    }
+    else
+    {
 
-    //cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n";
+    }
     cout << "\n" << "--------------------------------" << "\n";
+}
+
+void makeRomHeader(){
+    romData[0] = 0;
+    romData[1] = 0;
+    romData[2] = 0;
+    romData[3] = 0;
+    romDataPosition = 4;
 }
 
 int main()
 {
+    makeRomHeader();
     fout = fopen("game.rom","wb");
     int lineNumber = 0;
     bool isDataRow = false;
@@ -499,93 +557,114 @@ int main()
             //REMOVE THE COMMENTS FROM THE CODE MARKED WITH "#"
             line = line.substr(0, line.find(" #", 0));
 
-            if(startsWith(line, "#") || startsWith(line, " #")){
+            if(startsWith(line, "#") || startsWith(line, " #"))
+            {
                 cout << "COMMENTED LINE" << "\n";
-            }else{
-            if(line.rfind(".data", 0) == 0)  //is now reading the data for the rom
-            {
-                cout << "FOUND DATA ROW" << "\n";
-                isDataRow = true;
             }
-            if(line.rfind(".text", 0) == 0)  //is now reading the code
-            {
-                cout << "FOUND TEXT ROW" << "\n";
-                isDataRow = false;
-            }
-
-            if(isDataRow) {parseDataRow(line, lineNumber);lineNumber++;}
             else
             {
-                if(line.rfind("CALL", 0) == 0)
+                if(line.rfind(".data", 0) == 0)  //is now reading the data for the rom
                 {
-                    eraseAllSubStr(line, "CALL ");
-                    parseRowWithSpace(line, true);
+                    cout << "FOUND DATA ROW" << "\n";
+                    isDataRow = true;
                 }
-                else if(line.rfind("JUMP", 0) == 0)
+                if(line.rfind(".text", 0) == 0)  //is now reading the code
                 {
-                    //THE LINE IS A LABEL
-                    eraseAllSubStr(line, "JUMP ");
-                    parseRowWithSpace(line, false);
-                }
-                else if(line.rfind("RRA", 0) == 0)
-                {
-                    parseRowRamLoader(line);
-                }
-                else if(line.rfind("RRB", 0) == 0)
-                {
-                    parseRowRamLoader(line);
-                }
-                else if(line.rfind("RRC", 0) == 0)
-                {
-                    parseRowRamLoader(line);
-                }
-                else if(line.rfind("RRD", 0) == 0)
-                {
-                    parseRowRamLoader(line);
-                }
-                else if(line.rfind("RRE", 0) == 0)
-                {
-                    parseRowRamLoader(line);
-                }
-                else if(line.rfind("RRF", 0) == 0)
-                {
-                    parseRowRamLoader(line);
-                }
-                /*
-                else if (line.rfind("BEQ", 0) == 0)
-                {
-                    parseRowWithBEQ(line);
-                }
-                else if (line.rfind("BNE", 0) == 0)
-                {
-                    parseRowWithBNE(line);
-                }
-                */
-                else if(line.find(":") != std::string::npos)  // has a ":"
-                {
-                    cout << "was label" << "\n";
-                    //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
-                    line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
-                    pair<std::string,int> instr (line, lineNumber);
-                    labelsMap.insert(instr);
-                    cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                    cout << "FOUND TEXT ROW" << "\n";
+                    isDataRow = false;
                 }
 
-                else if(trim(line) != "" )
+                if(isDataRow)
                 {
-                    cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
-                    parseRow(line);
+                    parseDataRow(line, lineNumber);
                     lineNumber++;
                 }
                 else
                 {
-                    cout << "was empty line" << "\n";
+                    if(line.rfind("CALL", 0) == 0)
+                    {
+                        eraseAllSubStr(line, "CALL ");
+                        parseRowWithSpace(line, true);
+                    }
+                    else if(line.rfind("JUMP", 0) == 0)
+                    {
+                        //THE LINE IS A LABEL
+                        eraseAllSubStr(line, "JUMP ");
+                        parseRowWithSpace(line, false);
+                    }
+                    else if(line.rfind("RRA", 0) == 0)
+                    {
+                        parseRowRamLoader(line);
+                    }
+                    else if(line.rfind("RRB", 0) == 0)
+                    {
+                        parseRowRamLoader(line);
+                    }
+                    else if(line.rfind("RRC", 0) == 0)
+                    {
+                        parseRowRamLoader(line);
+                    }
+                    else if(line.rfind("RRD", 0) == 0)
+                    {
+                        parseRowRamLoader(line);
+                    }
+                    else if(line.rfind("RRE", 0) == 0)
+                    {
+                        parseRowRamLoader(line);
+                    }
+                    else if(line.rfind("RRF", 0) == 0)
+                    {
+                        parseRowRamLoader(line);
+                    }
+                    /*
+                    else if (line.rfind("BEQ", 0) == 0)
+                    {
+                        parseRowWithBEQ(line);
+                    }
+                    else if (line.rfind("BNE", 0) == 0)
+                    {
+                        parseRowWithBNE(line);
+                    }
+                    */
+                    else if(line.find(":") != std::string::npos)  // has a ":"
+                    {
+                        cout << "was label" << "\n";
+                        //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
+                        line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
+                        pair<std::string,int> instr (line, lineNumber);
+                        labelsMap.insert(instr);
+                        cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                    }
+
+                    else if(trim(line) != "" )
+                    {
+                        cout << "line read: " << line << "\n";//<< "LINE NUMBER: " << lineNumber << "\n";
+                        parseRow(line);
+                        lineNumber++;
+                    }
+                    else
+                    {
+                        cout << "was empty line" << "\n";
+                    }
                 }
-            }
             }
         }
 
     }
+    //FOR TESTING PURPOSES PRINTS THE ROM
+
+    for(int i = 0; i < romDataPosition; i++)
+    {
+        if(i % 4 == 0 && i != 0) cout << "\n";
+        cout << romData[i] << " ";
+    }
+
+    if(romDataPosition % 4 != 0){ //THIS SIMULATES THE ACUTAL MEMMORY, BECAUSE THE ROM DATA VECTOR IS GLOBAL SO IT IS ALREADY FILLED WITH "0"
+        for(int i = 0; i < romDataPosition % 4; i++){
+            cout << "0 ";
+        }
+    }
+
     in.close();
     fclose(fout);
     return 0;
