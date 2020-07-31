@@ -229,9 +229,9 @@ INSTRUCTION parseRowWithSpace(string label, bool isCall)
     if(labelsMap.count(label) == 0) cout << "LABEL NOT FOUND: " << label << "\n";
     else
     {
-        cout << "LABEL FOUND: " << labelsMap[label] << "\n";
+        cout << "LABEL NUMBER FOUND: " << labelsMap[label] << "\n";
         LABEL myLabel;
-        myLabel.SHORT = 1203;
+        myLabel.SHORT = labelsMap[label];
         std::cout << "HERE: " << (int)myLabel.BYTE[1] << ' ' << (int)myLabel.BYTE[0] << std::endl;
         int byteArray[4] = {0, 0, 0, 0};
         int currentPos = 0;
@@ -291,9 +291,9 @@ int main()
                 cout << "was label" << "\n";
                 //remove_copy(line.begin(), line.end(), back_inserter(line), ':');
                 line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
-                pair<std::string,double> instr (line, lineNumber);
+                pair<std::string,int> instr (line, lineNumber);
                 labelsMap.insert(instr);
-                cout << "LABEL: " << line << "\n"; // << " value: " << lineNumber << "\n";
+                cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
             }
 
             else if(trim(line) != "" )
