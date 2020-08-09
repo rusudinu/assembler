@@ -366,9 +366,9 @@ void parseRowRamLoader(string line)
         byteArray[currentPos] = convertUnknownToTypeByte(cuv);
         currentPos++;
     }
-    byteArray[3] = labelsMap[cuv];
-    cout << "CHECK ME: " << labelsMap[cuv] << '\n';
-    cout << "CHECK ME: " << cuv << '\n';
+    byteArray[3] = romDataPosition - 5; //4 is the header
+    cout  << '\n'<< "CHECK ME: " << byteArray[3] << '\n';
+
     writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
 }
 
