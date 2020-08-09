@@ -366,6 +366,9 @@ void parseRowRamLoader(string line)
         byteArray[currentPos] = convertUnknownToTypeByte(cuv);
         currentPos++;
     }
+    byteArray[3] = labelsMap[cuv];
+    cout << "CHECK ME: " << labelsMap[cuv] << '\n';
+    cout << "CHECK ME: " << cuv << '\n';
     writeToFile(byteArray[0], byteArray[1], byteArray[2], byteArray[3]);
 }
 
@@ -589,8 +592,8 @@ void preParseLabels()
                         line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
                         pair<std::string,int> instr (line, lineNumber);
                         labelsMap.insert(instr);
-                        cout << "LABEL: " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
-                        //lineNumber--;
+                        cout << "LABEL (PRE-PARSE): " << line << " at lineNumber " << lineNumber << "\n"; // << " value: " << lineNumber << "\n";
+                        //lineNumber++;
                     }
                     else if(trim(line) != "" )
                     {
