@@ -1,0 +1,193 @@
+.data
+meteorStrikeNo: 8 # RAM[9]
+meteorStrikes: 0 14 28 28 14 0 0 14 # RAM[10]
+.text
+LBI RA, 14
+SBIX RA, 6 # RAM[6] - marioY
+ 
+LBI RA, 160
+SBIX RA, 0 # RAM[0] = 160 meteorX
+ 
+LBI RA, 14
+SBIX RA, 1 # RAM[1] = 14 meteorY
+ 
+LBI RA, 0
+SBIX RA, 6 # RAM[6] = Y lui Mario
+ 
+LBI RA, 0
+SBIX RA, 8 # RAM[8] = currentMeteorStrike
+ 
+LBI RA, 8
+SBIX RA, 9 # meteorStrikeNo - ram[9]
+ 
+LBI RA, 0
+SBIX RA, 10 # meteorStrikes
+ 
+LBI RA, 14
+SBIX RA, 11
+ 
+LBI RA, 28
+SBIX RA, 12
+ 
+LBI RA, 14
+SBIX RA, 13
+ 
+LBI RA, 0
+SBIX RA, 14
+ 
+LBI RA, 28
+SBIX RA, 15
+ 
+LBI RA, 14
+SBIX RA, 16
+ 
+LBI RA, 28
+SBIX RA, 17
+ 
+JUMP drawLaneOne #0
+drawMeteor:
+LBI RA, 1
+LBIX RB, 0 # MX
+LBIX RC, 1 # MY
+LBI RD, 14
+LBI RE, 14
+LBI RF, 0
+SYSCALL
+JRT
+updateMeteor:
+ 
+ # Update X
+LBIX RB, 0
+LBI RA, 255 # == -1
+ADD RB, RB, RA
+SBIX, RB, 0
+ # Update Y
+LBIX RA, 0 # RA = meteorX
+LBI RB, 192
+BGT RA, RB # if meteorX > 192
+JUMP somewhereElse
+backElse:
+JRT
+ 
+ 
+checkDead:
+LBIX RA, 0 # RA = RAM[0] = meteorX
+LBI RB, 14
+BLE RA, RB # if meteorX <= 14
+JUMP checkDeadInside
+returnCheckDead:
+JRT
+ 
+checkDeadInside: # if meteorX <= 14 then
+LBIX RA, 6 # RA = RAM[6] = marioY
+LBIX RB, 1 # RB = RAM[1] = meteorY
+BEQ RA, RB
+JUMP endScreen
+JUMP returnCheckDead
+ 
+endScreen:
+LBI RA, 1 #2
+LBI RB, 0 #3
+LBI RC, 0 #4
+LBI RD, 192 #5
+LBI RE, 40 #6
+LBI RF, 0 #7
+SYSCALL #8
+endScreenHalt:
+LBI RA, 255
+SYSCALL
+JUMP endScreenHalt
+ 
+ 
+ 
+ 
+somewhereElse: #  if meteorX > 192 then
+LBI RA, 178
+SBIX RA, 0 # meteorX = 178 ( RAM[0]) 
+ 
+ 
+ # currentMeteorStrike++
+LBIX RA, 8 # RA = currentMeteorStrike
+LBI RB, 1
+ADD RA, RA, RB # RA = currentMeteorStrike + 1
+ 
+LBI RF, 9
+BEQ RA, RF # currentMeteorStrike == 9
+LBI RA, 0
+SBIX RA, 8 # currentMeteorStrike++ practic
+ 
+ 
+ # meteorY = RAMmeteorStrikes[currentMeteorStrike]
+LBIX RA, 8 # RA = currentMeteorStrike
+ # meteorY = RAM[10 + RA]
+ # Trebuie sa aducem in RD : RAM[10 + RA]
+LBI RB, 10 # RB = 10
+ADD RA, RA, RB # RA = RA + 10
+LB RD, RA
+SBIX RD, 1 # RAM[1] = meteorY = RD = RAM[currentMeteorStrike+10]
+ 
+JUMP backElse
+ 
+processInput:
+ 
+ # top : 0 mijloc : 14 bottom : 28
+ 
+MOV RC, IN # CITESTE INPUT IN RC
+LBI RB, 2 # RB = 2
+XOR RA, RC, RB # RA = RC^RB
+LBI RB, 0 # RB = 0
+LBI RC, 14
+BEQ RA, RB
+LBI RC, 28
+ 
+LBI RB, 1 # RB = 1
+MOV RD, IN # CITESTE INPUT IN RD
+XOR RA, RD, RB # RA = RD^RB = INPUT XOR 1
+LBI RB, 0 # RB = 0
+BEQ RA, RB # IF RA == 0
+LBI RC, 0
+SBIX RC, 6 # RAM[6] = Y-ul lui Mario
+JRT
+ 
+unalterprocessInput:
+MOV RC, RF
+JRT
+drawLaneOne:
+LBI RA, 1 #2
+LBI RB, 0 #3
+LBI RC, 0 #4
+LBI RD, 192 #5
+LBI RE, 14 #6
+LBI RF, 3 #7
+SYSCALL #8
+drawMidLane:
+LBI RA, 1 #9
+LBI RB, 0
+LBI RC, 14
+LBI RD, 255
+LBI RE, 14
+LBI RF, 15
+SYSCALL
+drawBottomLane:
+LBI RA, 1
+LBI RB, 0
+LBI RC, 28
+LBI RD, 255
+LBI RE, 14
+LBI RF, 2
+SYSCALL
+drawmario:
+CALL processInput # LBI RC, 14
+LBI RA, 1
+LBI RB, 0
+LBI RD, 14
+LBI RE, 14
+LBI RF, 1
+SYSCALL
+CALL updateMeteor
+CALL drawMeteor
+CALL checkDead
+halt:
+LBI RA, 255
+SYSCALL
+JUMP drawLaneOne

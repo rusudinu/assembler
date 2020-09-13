@@ -1,5 +1,5 @@
-LBI RA, 5
-loop:
-LBI RB, 7
-LBI RC, 1
-JUMP loop
+.data
+color: 10 20 30
+mylabel: 50
+.text
+RRF RC, mylabel

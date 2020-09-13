@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1596131947 source:c:\programming\openinfoeduparser\openinfoeduparser\main.cpp
+1596987951 source:c:\programming\openinfoeduparser\openinfoeduparser\main.cpp
 	<unordered_map>
 	<iostream>
 	<string>
@@ -9,5 +9,6 @@
 	<stdio.h>
 	<stdlib.h>
 	<fstream>
+	<math.h>
 	<ctype.h>
 
