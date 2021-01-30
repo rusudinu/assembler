@@ -4,6 +4,8 @@ This is an assembler written in C++, for packing games for the [emulator](https:
 
 This was written for a hackathon I attended in 2020. You can find the request in this readme, but it's written in romanian.
 
+# Instructions
+The assembler automatically parses the assembly code found in "input.txt" and spits the output into the "game.rom" file. "meteor_game_copy.txt" is a copy of the assembly code for a small game that was made to showcase the working assembler and emulator at the hackathon.
 
 # Hackathon request
 
