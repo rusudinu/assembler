@@ -1,4 +1,11 @@
-InfoEducație
+# Assembler
+
+This is an assembler written in C++, for packing games for the [emulator](https://github.com/rusudinu/emulator) of an old console, that can be found [here](https://github.com/rusudinu/emulator). This packs the game code written in assembly into a .rom file that is then parsed by the [emulator](https://github.com/rusudinu/emulator).
+
+This was written for a hackathon I attended in 2020. You can find the request in this readme, but it's written in romanian.
+
+
+# Hackathon request
 
 Proba Open - Utilitar 2020
 
